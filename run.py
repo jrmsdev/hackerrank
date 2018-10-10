@@ -7,6 +7,7 @@ from glob import glob
 import subprocess
 
 DEBUG = False
+verbose = False
 mydir = abspath (dirname (argv[0]))
 
 
@@ -74,6 +75,8 @@ def checkTest (t):
         print ('expect: {} - got: {}'.format (expect, result))
         return False
     print (' PASS')
+    if verbose:
+        print ('got:', result.strip ())
 
 
 def runTests (f):
@@ -85,6 +88,12 @@ def runTests (f):
 
 if __name__ == '__main__':
     dbg (mydir)
+    try:
+        verbose_opt = argv.index ('-v')
+        verbose = True
+        argv.pop (verbose_opt)
+    except ValueError:
+        pass
     for p in map (getPath, argv[1:]):
         dbg (p)
         if isdir (p):
