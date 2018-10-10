@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from sys import stderr
 from collections import Counter
 from itertools import repeat
 
