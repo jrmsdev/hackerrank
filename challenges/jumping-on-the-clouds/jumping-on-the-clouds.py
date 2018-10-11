@@ -17,4 +17,3 @@ _ = input ()
 c = list (map (int, input ().strip ().split ()))
 
 print (jump_clouds (c))
-
