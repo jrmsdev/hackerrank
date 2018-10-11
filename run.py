@@ -9,6 +9,8 @@ import subprocess
 DEBUG = False
 verbose = False
 mydir = abspath (dirname (argv[0]))
+total_checks = 0
+passed_checks = 0
 
 
 def dbg (*s):
@@ -51,6 +53,7 @@ def doTest (t):
 
 
 def checkTest (t):
+    global total_checks, passed_checks
     efn = t+'.out'
     rfn = t+'.result'
     expect = None
@@ -62,6 +65,7 @@ def checkTest (t):
         result = rfh.read ()
         rfh.close ()
     print (t, end = '')
+    total_checks += 1
     if expect is None:
         print (' FAIL')
         print ('ERROR: could not get test expect info (.in file)')
@@ -75,6 +79,7 @@ def checkTest (t):
         print ('expect: {} - got: {}'.format (expect, result))
         return False
     print (' PASS')
+    passed_checks += 1
     if verbose:
         print ('got:', result.strip ())
 
@@ -105,4 +110,5 @@ if __name__ == '__main__':
             runTests (p)
         else:
             dbg ('INVALID')
+    print ('Total:', total_checks, 'checks -', total_checks - passed_checks, 'failed')
     exit (0)
