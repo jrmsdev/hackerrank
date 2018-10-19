@@ -86,9 +86,17 @@ def find_tests (base):
         print ('INVALID:', base)
 
 if __name__ == '__main__':
+    verbose = 1
+
     # find tests
     if len (argv) > 1:
         for patt in sorted (argv[1:]):
+            if patt == '-v':
+                verbose += 1
+                continue
+            if patt == '-q':
+                verbose = 0
+                continue
             find_tests (patt)
     else:
         with scandir ('.') as it:
@@ -98,7 +106,7 @@ if __name__ == '__main__':
                         find_tests (e.name)
 
     # run tests
-    rnr = TextTestRunner (verbosity = 2)
+    rnr = TextTestRunner (verbosity = verbose)
     rst = rnr.run (test_suite)
 
     exit (1 if len (rst.errors) + len (rst.failures) > 0 else 0)
