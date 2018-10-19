@@ -29,7 +29,7 @@ class Test (FunctionTestCase):
                 outs = check_output ([self.script], timeout = TEST_TIMEOUT,
                                     stdin = fh, stderr = STDOUT)
             except CalledProcessError as err:
-                self.fail ('return code: %d' % err.returncode)
+                self.fail ('return code: %d\nOutput: %s' % (err.returncode, outs))
             except TimeoutExpired:
                 self.fail ('timeout (%ds) expired' % TEST_TIMEOUT)
             fh.close ()
