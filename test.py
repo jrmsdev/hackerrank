@@ -6,9 +6,9 @@ from sys import argv, exit
 from os import path, scandir
 from glob import glob
 from unittest import TestSuite, FunctionTestCase, TextTestRunner
-from subprocess import STDOUT, check_output, CalledProcessError
+from subprocess import STDOUT, check_output, CalledProcessError, TimeoutExpired
 
-TEST_TIMEOUT = 15
+TEST_TIMEOUT = 5
 
 test_fn = re.compile (r'.*\.t[0-9]+$')
 test_suite = TestSuite ()
@@ -30,6 +30,8 @@ class Test (FunctionTestCase):
                                     stdin = fh, stderr = STDOUT)
             except CalledProcessError as err:
                 self.fail ('return code: %d' % err.returncode)
+            except TimeoutExpired:
+                self.fail ('timeout (%ds) expired' % TEST_TIMEOUT)
             fh.close ()
         checks = None
         with open (self.outfn, 'r') as fh:
