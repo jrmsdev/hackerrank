@@ -39,7 +39,7 @@ class Test (FunctionTestCase):
             fh.close ()
         self.assertIsNotNone (outs, msg = 'no test output')
         self.assertIsNotNone (checks, msg = 'no test output to check')
-        self.assertEqual (outs.decode (), checks)
+        self.assertEqual (checks, outs.decode ())
         del outs
         del checks
 
