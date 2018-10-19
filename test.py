@@ -6,6 +6,9 @@ from sys import argv, exit
 from os import path, scandir
 from glob import glob
 from unittest import TestSuite, FunctionTestCase, TextTestRunner
+from subprocess import STDOUT, check_output, CalledProcessError
+
+TEST_TIMEOUT = 15
 
 test_fn = re.compile (r'.*\.t[0-9]+$')
 test_suite = TestSuite ()
@@ -15,15 +18,31 @@ class Test (FunctionTestCase):
     def __init__ (self, name):
         super ().__init__ (self.do_test)
         self.name = name
+        self.script = path.join ('.', re.sub (r'\.t[0-9]+$', '.py', name, count = 1))
+        self.infn = name + '.in'
+        self.outfn = name + '.out'
 
     def do_test (self):
-        pass
+        outs = None
+        with open (self.infn, 'r') as fh:
+            try:
+                outs = check_output ([self.script], timeout = TEST_TIMEOUT,
+                                    stdin = fh, stderr = STDOUT)
+            except CalledProcessError as err:
+                self.fail ('return code: %d' % err.returncode)
+            fh.close ()
+        checks = None
+        with open (self.outfn, 'r') as fh:
+            checks = fh.read ()
+            fh.close ()
+        self.assertIsNotNone (outs, msg = 'no test output')
+        self.assertIsNotNone (checks, msg = 'no test output to check')
+        self.assertEqual (outs.decode (), checks)
+        del outs
+        del checks
 
     def __str__ (self):
         return self.name
-
-def add_test (name):
-    test_suite.addTest (Test (name))
 
 def all_tests (script_filename):
     r = list ()
@@ -44,7 +63,7 @@ def xscandir (d):
 
 def find_tests (base):
     if test_fn.match (base):
-        add_test (base)
+        test_suite.addTest (Test (base))
 
     elif path.isdir (base):
         for x in xscandir (base):
