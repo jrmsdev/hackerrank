@@ -44,6 +44,11 @@ class Test (FunctionTestCase):
         del checks
 
     def __str__ (self):
+        b = path.dirname (self.name)
+        d = path.basename (b)
+        n = path.basename (self.name)
+        if n.startswith (d):
+            return path.join (path.dirname (b), n)
         return self.name
 
 def all_tests (script_filename):
