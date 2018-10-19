@@ -32,6 +32,8 @@ class Test (FunctionTestCase):
                 self.fail ('return code: %d\nOutput: %s' % (err.returncode, outs))
             except TimeoutExpired:
                 self.fail ('timeout (%ds) expired' % TEST_TIMEOUT)
+            except FileNotFoundError:
+                self.fail ('test script not found: %s' % self.script)
             fh.close ()
         checks = None
         with open (self.outfn, 'r') as fh:
