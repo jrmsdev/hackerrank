@@ -73,12 +73,12 @@ def find_tests (base):
         test_suite.addTest (Test (base))
 
     elif path.isdir (base):
-        for x in xscandir (base):
-            find_tests (x)
+        for t in xscandir (base):
+            test_suite.addTest (Test (t))
 
     elif path.isfile (base + '.py'):
         for t in all_tests (base + '.py'):
-            find_tests (t)
+            test_suite.addTest (Test (t))
 
     else:
         print ('INVALID:', base)
